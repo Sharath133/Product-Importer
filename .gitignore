@@ -1,0 +1,25 @@
+.coverage
+storage/
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+venv/
+.venv/
+env/
+.idea/
+.vscode/
+node_modules/
+dist/
+build/
+.DS_Store
+DEPLOYMENT.md
+PROJECT_SUMMARY.md
+CHECKLIST.md
+NUL
+# Environment files
+.env
+.env.*
+
