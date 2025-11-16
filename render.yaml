@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: product-importer-api
+    env: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: product-importer-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: product-importer-redis
+          property: connectionString
+      - key: ALLOWED_ORIGINS
+        value: "*"
+      - key: SECRET_KEY
+        value: change-this-secret
+  - type: worker
+    name: product-importer-worker
+    env: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: dramatiq backend.app.tasks --processes 1 --threads 4
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: product-importer-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: product-importer-redis
+          property: connectionString
+      - key: SECRET_KEY
+        value: change-this-secret
+databases:
+  - name: product-importer-db
+    plan: free
+    databaseName: product_importer
+    user: product_importer
+redis:
+  - name: product-importer-redis
+    plan: free
+

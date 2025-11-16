@@ -1,0 +1,15 @@
+fastapi==0.115.0
+uvicorn[standard]==0.29.0
+sqlalchemy==2.0.23
+alembic==1.13.1
+psycopg[binary]==3.1.12
+python-multipart==0.0.9
+dramatiq[rabbitmq,redis]==1.14.2
+redis==4.6.0
+httpx==0.25.0
+aiofiles==23.2.1
+python-dotenv==1.0.0
+pydantic-settings==2.1.0
+asyncpg==0.29.0
+sse-starlette==1.6.1
+
