@@ -2,10 +2,9 @@ services:
   - type: web
     name: product-importer-api
     runtime: python
-    runtimeVersion: "3.11"
     plan: free
     buildCommand: pip install -r backend/requirements.txt
-    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -18,7 +17,6 @@ services:
   - type: worker
     name: product-importer-worker
     runtime: python
-    runtimeVersion: "3.11"
     plan: free
     buildCommand: pip install -r backend/requirements.txt
     startCommand: python -m dramatiq backend.app.tasks --processes 1 --threads 1
