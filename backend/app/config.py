@@ -21,7 +21,7 @@ class Settings(BaseSettings):
 
     environment: str = "development"
     secret_key: str = "change-me"
-    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/product_importer"
+    database_url_raw: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/product_importer"
     # Prefer 127.0.0.1 to avoid potential IPv6 localhost quirks on Windows/Docker
     redis_url: str = "redis://127.0.0.1:6379/0"
     allowed_origins_raw: str = os.getenv("ALLOWED_ORIGINS", "*")
@@ -40,6 +40,18 @@ class Settings(BaseSettings):
             except json.JSONDecodeError:
                 pass
         return [item.strip() for item in raw.split(",") if item.strip()] or ["*"]
+
+    @computed_field(return_type=str)
+    @property
+    def database_url(self) -> str:
+        url = self.database_url_raw.strip()
+        if "+asyncpg" in url:
+            return url
+        if url.startswith("postgres://"):
+            url = "postgresql://" + url[len("postgres://") :]
+        if url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url
 
 
 @lru_cache
