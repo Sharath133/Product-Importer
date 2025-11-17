@@ -1,8 +1,21 @@
 from functools import lru_cache
-from typing import List
+import json
+from typing import List, Any
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def flexible_json_loads(value: Any):
+    """Render sets env vars as plain strings. Try JSON first, fall back to raw string."""
+    if value in (None, "", "null", "None"):
+        return value
+    if isinstance(value, (list, dict)):
+        return value
+    try:
+        return json.loads(value)
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return value
 
 
 class Settings(BaseSettings):
@@ -13,6 +26,7 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,
+        json_loads=flexible_json_loads,
     )
 
     environment: str = "development"
